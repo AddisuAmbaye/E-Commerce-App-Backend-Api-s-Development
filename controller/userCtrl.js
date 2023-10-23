@@ -2,6 +2,8 @@ const  user = require('../models/userModel');
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcrypt');
 const generateToken = require('../config/generateToken')
+
+//create user
 const createUserCtrl = asyncHandler(
     async (req, res) => {
         const email = req.body.email;
@@ -14,7 +16,7 @@ const createUserCtrl = asyncHandler(
            throw new Error('User already exists');
         }       
   });
-
+//login
 const userLoginCtrl = asyncHandler(
    async(req, res) => {
 
@@ -42,4 +44,84 @@ const userLoginCtrl = asyncHandler(
       throw new Error("Invalid login credentials");
    } 
   });
-module.exports = {createUserCtrl, userLoginCtrl};
+
+  //get all users
+  const getAllUsersCtrl = asyncHandler(async (req, res) => {
+   try
+    {
+      const Users = await user.find();
+      res.json(Users);
+    }
+  catch(error){
+    throw new Error(error)
+   }
+  });
+
+//get user by id
+const getUserCtrl = asyncHandler(async (req, res) => {
+   try{
+      const User = await user.findById(req.params.id);
+      res.json(User)
+   }
+   catch(error){
+      throw new Error("user not found")
+   }
+});
+
+//delete user
+const deleteUserCtrl = asyncHandler(async (req, res) => {
+   try{
+      await user.findByIdAndDelete(req.params.id);
+      res.json({
+         status: "success",
+         data: "User deleted successfully",
+       });
+   }
+   catch(error){
+      throw new Error("user not found")
+   }
+});
+
+//update
+const userUpdateCtrl = asyncHandler(async (req, res, next) => {
+   const { email, lastname, firstname, mobile } = req.body;
+   try {
+     //Check if email is not taken
+     if (email) {
+       const emailTaken = await user.findOne({ email });
+       if (emailTaken) {
+        throw new Error("Email is taken");
+       }
+     }
+ 
+     //update the user
+     const User = await user.findByIdAndUpdate(
+       req.params.id,
+       {
+         firstname,
+         lastname,
+         email,
+         mobile
+       },
+       {
+         new: true,
+         runValidators: true,
+       }
+     );
+     //send response
+     res.json({
+       status: "success",
+       data: User,
+     });
+   } catch (error) {
+     throw new Error(error);
+   }
+ });
+
+module.exports =   {
+                     createUserCtrl, 
+                     userLoginCtrl,
+                     userUpdateCtrl,
+                     getAllUsersCtrl, 
+                     getUserCtrl,
+                     deleteUserCtrl};
