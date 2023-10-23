@@ -1,19 +1,43 @@
 const  user = require('../models/userModel');
+const asyncHandler = require('express-async-handler');
+const bcrypt = require('bcrypt');
+const createUserCtrl = asyncHandler(
+    async (req, res) => {
+        const email = req.body.email;
+        const UserFound = await user.findOne({email});
+        if(!UserFound){
+           const newUser = await user.create(req.body);
+           res.json(newUser);
+          
+        }else{ 
+           throw new Error('User already exists');
+        }       
+  });
 
-const createUser = async (req, res) => {
-      const email = req.body.email;
-      const findUser = await user.findOne({email});
-      if(!findUser){
-         const newUser = await user.create(req.body);
-         res.json(newUser);
-        
-      }
-      else{
-        res.json({
-            message: "user already exists",
-            sucess: false
-      }); 
-      }
-};
+const userLoginCtrl = asyncHandler(
+   async(req, res) => {
 
-module.exports = createUser;
+      const{email, password} = req.body;
+      const userFound = await user.findOne({email});
+      if(!userFound){
+         res.json({message: "Email not found"});
+      }
+     
+     const isPasswordMatched = await bcrypt.compareSync(password, userFound.password);
+
+    if(isPasswordMatched) { 
+      res.json({
+      status: "success",
+      data: {
+        firstname: userFound.firstname,
+        lastname: userFound.lastname,
+        email: userFound.email,
+        mobile: userFound.mobile,
+      },
+    });
+   }
+   else{
+      throw new Error("Invalid login credentials");
+   } 
+  });
+module.exports = {createUserCtrl, userLoginCtrl};
