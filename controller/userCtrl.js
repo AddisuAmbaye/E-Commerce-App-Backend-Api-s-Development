@@ -1,6 +1,7 @@
 const  user = require('../models/userModel');
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcrypt');
+const generateToken = require('../config/generateToken')
 const createUserCtrl = asyncHandler(
     async (req, res) => {
         const email = req.body.email;
@@ -33,6 +34,7 @@ const userLoginCtrl = asyncHandler(
         lastname: userFound.lastname,
         email: userFound.email,
         mobile: userFound.mobile,
+        token: generateToken(userFound._id)
       },
     });
    }
