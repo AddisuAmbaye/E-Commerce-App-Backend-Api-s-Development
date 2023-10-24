@@ -124,4 +124,5 @@ module.exports =   {
                      userUpdateCtrl,
                      getAllUsersCtrl, 
                      getUserCtrl,
-                     deleteUserCtrl};
+                     deleteUserCtrl
+                    };
