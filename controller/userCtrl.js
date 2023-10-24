@@ -65,7 +65,7 @@ const getUserCtrl = asyncHandler(async (req, res) => {
    }
    catch(error){
       throw new Error("user not found")
-   }
+   } 
 });
 
 //delete user
@@ -96,7 +96,7 @@ const userUpdateCtrl = asyncHandler(async (req, res, next) => {
  
      //update the user
      const User = await user.findByIdAndUpdate(
-       req.params.id,
+       req.user._id,
        {
          firstname,
          lastname,

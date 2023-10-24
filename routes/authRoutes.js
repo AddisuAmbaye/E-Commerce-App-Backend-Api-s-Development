@@ -6,14 +6,14 @@ const {
           getUserCtrl,
           deleteUserCtrl,
           userUpdateCtrl } = require('../controller/userCtrl');
-const authMiddleware = require('../middlewares/authMiddleware');
+const { authMiddleware, isAdmin } = require('../middlewares/authMiddleware');
 const userRouter = express.Router();
 
 userRouter.post("/register", createUserCtrl);
 userRouter.post("/login", userLoginCtrl);
 userRouter.get("/get_all_users", getAllUsersCtrl);
-userRouter.get("/:id", authMiddleware, getUserCtrl);
+userRouter.get("/:id", authMiddleware, isAdmin, getUserCtrl);
 userRouter.delete("/:id", deleteUserCtrl);
-userRouter.put("/:id", userUpdateCtrl);
+userRouter.put("/edit_user", authMiddleware, userUpdateCtrl);
 
 module.exports = userRouter;
