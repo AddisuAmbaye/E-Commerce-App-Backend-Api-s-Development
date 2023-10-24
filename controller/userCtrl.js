@@ -113,16 +113,59 @@ const userUpdateCtrl = asyncHandler(async (req, res, next) => {
        status: "success",
        data: User,
      });
+
    } catch (error) {
-     throw new Error(error);
+       throw new Error(error);
    }
  });
 
-module.exports =   {
+//  block user
+const blockUser = asyncHandler(async(req, res) =>{
+
+    try {
+       await user.findByIdAndUpdate(req.params.id, 
+        {
+          isBlocked: true
+       },
+       {
+        new: true
+       });
+       
+    } catch (error) {
+        throw new Error(error);
+    }  
+    res.json({
+      message:"User Blocked"
+    });
+  });
+
+
+// unblock user
+const unblockUser = asyncHandler(async(req, res) =>{
+  try {
+     await user.findByIdAndUpdate(req.params.id, 
+     {
+       isBlocked: false
+    },
+    {
+     new: true
+    });
+    
+ } catch (error) {
+     throw new Error(error);
+ } 
+ res.json({
+  message: "User UnBlocked"
+ }) 
+});
+
+ module.exports =   {
                      createUserCtrl, 
                      userLoginCtrl,
                      userUpdateCtrl,
                      getAllUsersCtrl, 
                      getUserCtrl,
-                     deleteUserCtrl
+                     deleteUserCtrl,
+                     blockUser,
+                     unblockUser
                     };
