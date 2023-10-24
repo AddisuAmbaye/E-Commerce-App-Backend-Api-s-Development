@@ -1,7 +1,10 @@
-const  user = require('../models/userModel');
+const user = require('../models/userModel');
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcrypt');
-const generateToken = require('../config/generateToken')
+const generateToken = require('../config/generateToken');
+const generateRefershToken = require('../config/refreshToken');
+const cookie = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 
 //create user
 const createUserCtrl = asyncHandler(
@@ -19,7 +22,6 @@ const createUserCtrl = asyncHandler(
 //login
 const userLoginCtrl = asyncHandler(
    async(req, res) => {
-
       const{email, password} = req.body;
       const userFound = await user.findOne({email});
       if(!userFound){
@@ -28,15 +30,29 @@ const userLoginCtrl = asyncHandler(
      
      const isPasswordMatched = await bcrypt.compareSync(password, userFound.password);
 
-    if(isPasswordMatched) { 
+    if(isPasswordMatched) {  
+      const refreshToken = await generateRefershToken(userFound?._id);
+      await user.findByIdAndUpdate(
+        userFound?._id,
+         {
+          refreshToken: refreshToken
+         },
+         {
+          new: true
+         });
+       res.cookie('refreshToken', refreshToken, { 
+          maxAge: 72 * 60 * 60 * 1000, // Cookie expiration time in milliseconds (e.g., 3 days)
+          secure: true, 
+          httpOnly: true, 
+        });
       res.json({
       status: "success",
-      data: {
+      data: { 
         firstname: userFound.firstname,
         lastname: userFound.lastname,
         email: userFound.email,
         mobile: userFound.mobile,
-        token: generateToken(userFound._id)
+        token: generateToken(userFound.id)
       },
     });
    }
@@ -155,8 +171,24 @@ const unblockUser = asyncHandler(async(req, res) =>{
      throw new Error(error);
  } 
  res.json({
-  message: "User UnBlocked"
+  message: "User UnBlocked" 
  }) 
+});
+
+const refreshTokenHandler = asyncHandler( async (req, res) => {
+    const cookie = req.cookies;
+    if(!cookie.refreshToken) throw new Error(" No Refresh token");
+    const refreshToken = cookie.refreshToken;
+    const User = await user.findOne({ refreshToken });
+    jwt.verify(refreshToken, process.env.JWT_KEY, (err, decoded) =>
+    {
+      if(err || User.id !== decoded.id){
+        throw new Error("There is something wrong with the refresh token");
+      }
+      const accessToken = generateToken(User._id);
+      res.json(accessToken);
+    });
+  
 });
 
  module.exports =   {
@@ -167,5 +199,6 @@ const unblockUser = asyncHandler(async(req, res) =>{
                      getUserCtrl,
                      deleteUserCtrl,
                      blockUser,
-                     unblockUser
-                    };
+                     unblockUser,
+                     refreshTokenHandler
+                    }; 

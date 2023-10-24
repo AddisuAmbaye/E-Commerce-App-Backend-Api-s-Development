@@ -22,4 +22,4 @@ const notFoundErr = (req, res, next) => {
   next(err);
 };
 
-module.exports = globalErrHandler;
+module.exports = {notFoundErr, globalErrHandler};
