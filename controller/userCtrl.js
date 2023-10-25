@@ -16,7 +16,7 @@ const createUserCtrl = asyncHandler(
            res.json(newUser);
           
         }else{ 
-           throw new Error('User already exists');
+           throw new Error('User already exists.');
         }       
   });
 //login
