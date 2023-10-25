@@ -2,6 +2,7 @@ const express = require('express');
 const userRouter = require('./routes/authRoutes');
 const {notFoundErr, globalErrHandler} = require('./middlewares/globalErrHandler');
 const cookieParser = require('cookie-parser');
+const productRouter = require('./routes/productRoutes');
 
 require('dotenv').config();
 require('./config/dbConnect');
@@ -12,6 +13,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use('/api/user', userRouter);
+app.use('/api/product', productRouter);
 
 app.use(globalErrHandler)
 app.use(notFoundErr)
