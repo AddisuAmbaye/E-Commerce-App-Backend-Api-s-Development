@@ -31,9 +31,9 @@ const userLoginCtrl = asyncHandler(
      const isPasswordMatched = await bcrypt.compareSync(password, userFound.password);
 
     if(isPasswordMatched) {  
-      const refreshToken = await generateRefershToken(userFound?._id);
+      const refreshToken = await generateRefershToken(userFound.id);
       await user.findByIdAndUpdate(
-        userFound?._id,
+        userFound.id,
          {
           refreshToken: refreshToken
          },
@@ -175,6 +175,7 @@ const unblockUser = asyncHandler(async(req, res) =>{
  }) 
 });
 
+//refresh token handler
 const refreshTokenHandler = asyncHandler( async (req, res) => {
     const cookie = req.cookies;
     if(!cookie.refreshToken) throw new Error(" No Refresh token");
@@ -185,11 +186,13 @@ const refreshTokenHandler = asyncHandler( async (req, res) => {
       if(err || User.id !== decoded.id){
         throw new Error("There is something wrong with the refresh token");
       }
-      const accessToken = generateToken(User._id);
+      const accessToken = generateToken(User.id);
       res.json(accessToken);
     });
   
 });
+
+//logout
 
  module.exports =   {
                      createUserCtrl, 
