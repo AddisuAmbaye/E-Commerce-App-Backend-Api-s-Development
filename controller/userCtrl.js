@@ -187,7 +187,7 @@ const refreshTokenHandler = asyncHandler( async (req, res) => {
         throw new Error("There is something wrong with the refresh token");
       }
       const accessToken = generateToken(User.id);
-      res.json(accessToken);
+      res.json({accessToken});
     });
   
 });
@@ -195,17 +195,17 @@ const refreshTokenHandler = asyncHandler( async (req, res) => {
 //logout
 const logout = asyncHandler( async( req, res) => {
   const cookie = req.cookies;
-  if(!cookie.refreshToken) throw new Error(" No Refresh token");
+  if(!cookie.refreshToken) throw new Error("No Refresh token");
   const refreshToken = cookie.refreshToken;
   const User = await user.findOne({ refreshToken });
   if(!User){
-    res.clearCookie("refreshToken", {
+    res.clearCookie(refreshToken, {
       httpOnly: true,
       secure: true
     });
-    res.status(204);   
+    res.sendStatus(204);   
   }
-  await user.findOneAndUpdate({ refreshToken: refreshToken },
+  await user.findOneAndUpdate({refreshToken},
     {
       refreshToken: " "
     }); 
@@ -213,7 +213,7 @@ const logout = asyncHandler( async( req, res) => {
       httpOnly: true, 
       secure: true
     });
-    res.status(204);  
+    res.sendStatus(204);  
 });
 
  module.exports =   {
