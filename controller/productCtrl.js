@@ -1,15 +1,16 @@
 const product = require('../models/productModel');
 const asyncHandler = require('express-async-handler');
-
+const slugify = require('slugify');
 // create product
 const createProduct = asyncHandler(async (req, res) => {
-    const title = req.body.title;
-    const productFound = await product.findOne({ title });
-    if(!productFound){
-        const newProduct = await product.create(req.body);
-        res.json(newProduct);
-    }
-    else{
+   try{
+        if(req.body.title){
+            req.body.slug = slugify(req.body.title);
+        }
+       const newProduct = await product.create(req.body);
+       res.json(newProduct);    
+   }
+    catch(err){
         throw new Error("Product already exists.");
     }
 });
@@ -32,17 +33,12 @@ const getProduct = asyncHandler(async (req, res) => {
 
 // update product
 const updateProduct = asyncHandler( async(req, res) => {
-    const product = req.body;
     try{
-      const UpdatedProduct = await product.findByIdAndUpdate(
-            req.params.id, 
-            {
-            product
-            },
-            {
-            new: true
-            });
-            res.json(UpdatedProduct);
+      if(req.body.title){
+            req.body.slug = slugify(req.body.title);
+        }  
+      const UpdatedProduct = await product.findByIdAndUpdate(req.params.id, req.body, { new: true } );
+      res.json(UpdatedProduct);
     }
    catch(err){
           throw new Error(err);

@@ -112,7 +112,7 @@ const userUpdateCtrl = asyncHandler(async (req, res, next) => {
  
      //update the user
      const User = await user.findByIdAndUpdate(
-       req.user._id,
+       req.user.id,
        {
          firstname,
          lastname,
@@ -122,9 +122,9 @@ const userUpdateCtrl = asyncHandler(async (req, res, next) => {
        {
          new: true,
          runValidators: true,
-       }
+       } 
      );
-     //send response
+     //send response  
      res.json({
        status: "success",
        data: User,

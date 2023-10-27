@@ -12,5 +12,5 @@ productRouter.get("/get-all-products", getAllProducts);
 productRouter.get("/get-product/:id", getProduct);
 productRouter.put("/update-product/:id", updateProduct);
 productRouter.delete("/delete-product/:id", deleteProduct);
-
-module.exports = productRouter;  
+ 
+module.exports = productRouter;   
