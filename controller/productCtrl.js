@@ -30,4 +30,43 @@ const getProduct = asyncHandler(async (req, res) => {
 
 })
 
-module.exports = {createProduct, getAllProducts, getProduct}; 
+// update product
+const updateProduct = asyncHandler( async(req, res) => {
+    const product = req.body;
+    try{
+      const UpdatedProduct = await product.findByIdAndUpdate(
+            req.params.id, 
+            {
+            product
+            },
+            {
+            new: true
+            });
+            res.json(UpdatedProduct);
+    }
+   catch(err){
+          throw new Error(err);
+   }
+});
+
+// delete user
+
+const deleteProduct = asyncHandler( async(req, res) => {
+    try{
+         await product.findByIdAndDelete(req.params.id);
+         res.json({
+            status: "success",
+            data: "User deleted successfully",
+          });
+        }
+   catch(err){
+        throw new Error("Product not found");
+   }
+});
+module.exports = {  
+                    createProduct, 
+                    getAllProducts,  
+                    getProduct,  
+                    updateProduct, 
+                    deleteProduct
+                }; 
