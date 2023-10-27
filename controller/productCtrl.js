@@ -15,9 +15,19 @@ const createProduct = asyncHandler(async (req, res) => {
 });
 
 // get all products
-const getProducts = asyncHandler(async (req, res) => {
+const getAllProducts = asyncHandler(async (req, res) => {
     const products = await product.find();
     res.json(products);
+});
+
+// get product 
+const getProduct = asyncHandler(async (req, res) => {
+    const getproduct = await product.findById(req.params.id);
+    if(!getproduct){
+        throw new Error("Product does not exist");
+    }
+    res.json(getproduct);
+
 })
 
-module.exports = {createProduct, getProducts};
+module.exports = {createProduct, getAllProducts, getProduct}; 
