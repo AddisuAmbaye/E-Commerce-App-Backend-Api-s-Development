@@ -86,16 +86,25 @@ const getUserCtrl = asyncHandler(async (req, res) => {
 
 //delete user
 const deleteUserCtrl = asyncHandler(async (req, res) => {
-   try{
-      await user.findByIdAndDelete(req.params.id);
-      res.json({
-         status: "success",
-         data: "User deleted successfully",
-       });
-   }
-   catch(error){
-      throw new Error("user not found")
-   }
+  try {
+    const userToDelete = await user.findById(req.params.id);
+
+    if (!userToDelete) {
+      return res.status(404).json({
+        status: "error",
+        message: "User not found",
+      });
+    }
+
+    await user.findByIdAndDelete(req.params.id);
+
+    res.json({
+      status: "success",
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    throw new Error("Failed to delete user");
+  }
 });
 
 //update

@@ -15,19 +15,19 @@ var productSchema = new mongoose.Schema({
     },
     description:{
         type:String,
-        required:true,
+        required:true, 
     },
     price:{
         type:Number,
         required:true,
     },
     category:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'category',
     },
     brand:{
         type: String,
-        enum: ['Apple', 'Samsung','Lenovo'],
+        // enum: ['Apple', 'Samsung','Lenovo'],
     },
     quantity:{
         type: Number,
@@ -46,8 +46,7 @@ var productSchema = new mongoose.Schema({
     },
     ratings:{
         star: Number,
-        postedby: {type: mongoose.Schema.Types.ObjectId,
-        ref: 'User' } 
+        postedby: String
      },
   }, 
   {

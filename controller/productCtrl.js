@@ -1,6 +1,7 @@
 const product = require('../models/productModel');
 const asyncHandler = require('express-async-handler');
 const slugify = require('slugify');
+
 // create product
 const createProduct = asyncHandler(async (req, res) => {
    try{
@@ -11,12 +12,11 @@ const createProduct = asyncHandler(async (req, res) => {
        res.json(newProduct);    
    }
     catch(err){
-        throw new Error("Product already exists.");
+        throw new Error(err);
     }
 });
 
 // get all products
-
 const getAllProducts = asyncHandler(async (req, res) => {
     try{
         //filtering
@@ -76,20 +76,29 @@ const updateProduct = asyncHandler( async(req, res) => {
    }
 });
 
-// delete user
+// delete product
 
-const deleteProduct = asyncHandler( async(req, res) => {
-    try{
-         await product.findByIdAndDelete(req.params.id);
-         res.json({
-            status: "success",
-            data: "User deleted successfully",
-          });
-        }
-   catch(err){
-        throw new Error("Product not found");
-   }
-});
+const deleteProduct = asyncHandler(async (req, res) => {
+    try {
+      const productToDelete = await product.findById(req.params.id);
+  
+      if (!productToDelete) {
+        return res.status(404).json({
+          status: "error",
+          message: "Product not found",
+        });
+      }
+  
+      await product.findByIdAndDelete(req.params.id);
+  
+      res.json({
+        status: "success",
+        message: "Product deleted successfully",
+      });
+    } catch (error) {
+      throw new Error("Failed to delete product");
+    }
+  });
 module.exports = {  
                     createProduct, 
                     getAllProducts,  
