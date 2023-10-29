@@ -62,7 +62,19 @@ const userLoginCtrl = asyncHandler(
   });
 
   //update password
- 
+  const updatePassword = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    const { password } = req.body;
+    // validateMongoDbId(_id);
+    const User = await user.findById(_id);
+    if (password) {
+      User.password = password;
+      const updatedPassword = await User.save();
+      res.json(updatedPassword);
+    } else {
+      res.json(user);
+    }
+  });
 
   //get all users
   const getAllUsersCtrl = asyncHandler(async (req, res) => {
@@ -238,5 +250,6 @@ const logout = asyncHandler( async( req, res) => {
                      blockUser,
                      unblockUser,
                      refreshTokenHandler,
-                     logout
+                     logout,
+                     updatePassword
                     }; 
