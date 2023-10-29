@@ -61,6 +61,9 @@ const userLoginCtrl = asyncHandler(
    } 
   });
 
+  //update password
+ 
+
   //get all users
   const getAllUsersCtrl = asyncHandler(async (req, res) => {
    try
