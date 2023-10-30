@@ -64,7 +64,9 @@ const getAllProducts = asyncHandler(async (req, res) => {
 
 // get product 
 const getProduct = asyncHandler(async (req, res) => {
-    const getproduct = await product.findById(req.params.id);
+    const id = req.params.id;
+    validateMongoDbId(id);
+    const getproduct = await product.findById(id);
     if(!getproduct){
         throw new Error("Product does not exist");
     }
@@ -74,11 +76,13 @@ const getProduct = asyncHandler(async (req, res) => {
 
 // update product
 const updateProduct = asyncHandler( async(req, res) => {
+    const id = req.params.id;
+    validateMongoDbId(id);
     try{
       if(req.body.title){
             req.body.slug = slugify(req.body.title);
         }  
-      const UpdatedProduct = await product.findByIdAndUpdate(req.params.id, req.body, { new: true } );
+      const UpdatedProduct = await product.findByIdAndUpdate(id, req.body, { new: true } );
       res.json(UpdatedProduct);
     }
    catch(err){
@@ -87,10 +91,11 @@ const updateProduct = asyncHandler( async(req, res) => {
 });
 
 // delete product
-
 const deleteProduct = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    validateMongoDbId(id);
     try {
-      const productToDelete = await product.findById(req.params.id);
+      const productToDelete = await product.findById(id);
   
       if (!productToDelete) {
         return res.status(404).json({

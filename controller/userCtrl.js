@@ -5,6 +5,7 @@ const generateToken = require('../config/generateToken');
 const generateRefershToken = require('../config/refreshToken');
 const cookie = require('cookie-parser');
 const jwt = require('jsonwebtoken');
+const validateMongoDbId = require('../utils/validateMongodbId');
 
 //create user
 const createUserCtrl = asyncHandler(
@@ -64,8 +65,8 @@ const userLoginCtrl = asyncHandler(
   //update password
   const updatePassword = asyncHandler(async (req, res) => {
     const { _id } = req.user;
+    validateMongoDbId(_id);
     const { password } = req.body;
-    // validateMongoDbId(_id);
     const User = await user.findById(_id);
     if (password) {
       User.password = password;
@@ -90,8 +91,10 @@ const userLoginCtrl = asyncHandler(
 
 //get user by id
 const getUserCtrl = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  validateMongoDbId(id);
    try{
-      const User = await user.findById(req.params.id);
+      const User = await user.findById(id);
       res.json(User)
    }
    catch(error){
@@ -162,8 +165,10 @@ const userUpdateCtrl = asyncHandler(async (req, res, next) => {
 //  block user
 const blockUser = asyncHandler(async(req, res) =>{
 
+    const id = req.params.id;
+    validateMongoDbId(id);
     try {
-       await user.findByIdAndUpdate(req.params.id, 
+       await user.findByIdAndUpdate(id, 
         {
           isBlocked: true
        },
@@ -182,8 +187,10 @@ const blockUser = asyncHandler(async(req, res) =>{
 
 // unblock user
 const unblockUser = asyncHandler(async(req, res) =>{
+  const id = req.params.id;
+  validateMongoDbId(id);
   try {
-     await user.findByIdAndUpdate(req.params.id, 
+     await user.findByIdAndUpdate(id, 
      {
        isBlocked: false
     },
