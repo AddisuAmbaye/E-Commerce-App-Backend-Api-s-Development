@@ -6,6 +6,7 @@ const generateRefershToken = require('../config/refreshToken');
 const cookie = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const validateMongoDbId = require('../utils/validateMongodbId');
+const sendEmail = require('./emailCtrl')
 
 //create user
 const createUserCtrl = asyncHandler(
@@ -65,8 +66,8 @@ const userLoginCtrl = asyncHandler(
   //update password
   const updatePassword = asyncHandler(async (req, res) => {
     const { _id } = req.user;
-    validateMongoDbId(_id);
     const { password } = req.body;
+    validateMongoDbId(_id);
     const User = await user.findById(_id);
     if (password) {
       User.password = password;
@@ -152,7 +153,7 @@ const userUpdateCtrl = asyncHandler(async (req, res, next) => {
        } 
      );
      //send response  
-     res.json({
+     res.json({ 
        status: "success",
        data: User,
      });
@@ -247,10 +248,34 @@ const logout = asyncHandler( async( req, res) => {
     res.sendStatus(204);  
 });
 
+// forgot password
+const forgotPasswordToken = asyncHandler(async(req, res) => {
+  const email = req.body.email;
+  const User = await user.findOne({email});
+  if(!User) throw new Error("User not found");
+  try {
+    // const resettoken = user.createPasswordResetToken();
+    // await user.save();
+    resetUrl = `Hello, Please follow this link to reset your password. This link is valid till 30 minutes form now. <a href = "http://localhost:3000/api/user/reset-password">Click Here!</a>`;
+    const data = {
+      to: email,
+      text: 'Hello User',
+      subject: 'Forgot password Link',
+      html: resetUrl
+    };
+    sendEmail(data)
+    res.json({status: "success"})
+    
+  } catch (error) {
+    throw new Error(error);
+  }
+ 
+});
+
  module.exports =   {
                      createUserCtrl, 
                      userLoginCtrl,
-                     userUpdateCtrl,
+                     userUpdateCtrl, 
                      getAllUsersCtrl, 
                      getUserCtrl,
                      deleteUserCtrl,
@@ -258,5 +283,6 @@ const logout = asyncHandler( async( req, res) => {
                      unblockUser,
                      refreshTokenHandler,
                      logout,
-                     updatePassword
+                     updatePassword,
+                     forgotPasswordToken
                     }; 
