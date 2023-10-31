@@ -6,7 +6,8 @@ const generateRefershToken = require('../config/refreshToken');
 const cookie = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const validateMongoDbId = require('../utils/validateMongodbId');
-const sendEmail = require('./emailCtrl')
+const sendEmail = require('./emailCtrl');
+const crypto = require('crypto');
 
 //create user
 const createUserCtrl = asyncHandler(
@@ -254,9 +255,9 @@ const forgotPasswordToken = asyncHandler(async(req, res) => {
   const User = await user.findOne({email});
   if(!User) throw new Error("User not found");
   try {
-    // const resettoken = user.createPasswordResetToken();
-    // await user.save();
-    resetUrl = `Hello, Please follow this link to reset your password. This link is valid till 30 minutes form now. <a href = "http://localhost:3000/api/user/reset-password">Click Here!</a>`;
+    const token = await User.createPasswordResetToken();
+    await User.save();
+    resetUrl = `Hello👋, Please follow this link to reset your password. This link is valid till 30 minutes form now. <a href = "http://localhost:3000/api/user/reset-password/${token}">Click Here!</a>`;
     const data = {
       to: email,
       text: 'Hello User',
@@ -264,12 +265,29 @@ const forgotPasswordToken = asyncHandler(async(req, res) => {
       html: resetUrl
     };
     sendEmail(data)
-    res.json({status: "success"})
+    res.json({token});
     
-  } catch (error) {
+  } catch (error) { 
     throw new Error(error);
-  }
+  } 
  
+});
+
+//reset password
+const resetPassword = asyncHandler(async(req, res) => {
+    const { password } = req.body;
+    const { token } = req.params;
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    const User = await user.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() },
+  });
+  if (!User) throw new Error(" Token Expired, Please try again later");
+      User.password = password;
+      User.passwordResetToken = undefined;
+      User.passwordResetExpires = undefined;
+      await User.save();
+      res.json(User);
 });
 
  module.exports =   {
@@ -284,5 +302,6 @@ const forgotPasswordToken = asyncHandler(async(req, res) => {
                      refreshTokenHandler,
                      logout,
                      updatePassword,
-                     forgotPasswordToken
+                     forgotPasswordToken,
+                     resetPassword
                     }; 
