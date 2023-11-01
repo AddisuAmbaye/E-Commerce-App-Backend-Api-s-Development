@@ -13,7 +13,7 @@ const app = express();
 
 // middlewares
 app.use(express.json());
-app.use(morgan());
+app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -23,8 +23,8 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
 
-app.use(globalErrHandler)
-app.use(notFoundErr)
+app.use(globalErrHandler);
+app.use(notFoundErr);
 
 PORT = process.env.PORT || 3000;
 

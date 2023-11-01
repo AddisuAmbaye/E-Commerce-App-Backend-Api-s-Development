@@ -266,7 +266,7 @@ const forgotPasswordToken = asyncHandler(async(req, res) => {
     };
     sendEmail(data)
     res.json({token});
-    
+     
   } catch (error) { 
     throw new Error(error);
   } 
@@ -282,7 +282,7 @@ const resetPassword = asyncHandler(async(req, res) => {
       passwordResetToken: hashedToken,
       passwordResetExpires: { $gt: Date.now() },
   });
-  if (!User) throw new Error(" Token Expired, Please try again later");
+  if (!User) throw new Error("Token Expired, Please try again later");
       User.password = password;
       User.passwordResetToken = undefined;
       User.passwordResetExpires = undefined;

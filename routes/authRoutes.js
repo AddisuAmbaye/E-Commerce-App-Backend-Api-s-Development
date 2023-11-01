@@ -31,4 +31,4 @@ userRouter.put("/block_user/:id", authMiddleware, isAdmin, blockUser);
 userRouter.put("/unblock_user/:id", authMiddleware, isAdmin, unblockUser);
 
  
-module.exports = userRouter; 
+module.exports = userRouter;  
