@@ -1,10 +1,11 @@
 const express = require('express');
-const userRouter = require('./routes/authRoutes');
 const {notFoundErr, globalErrHandler} = require('./middlewares/globalErrHandler');
 const cookieParser = require('cookie-parser');
-const productRouter = require('./routes/productRoutes');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const userRouter = require('./routes/authRoutes');
+const productRouter = require('./routes/productRoutes');
+const blogRouter = require('./routes/blogRoutes');
 
 require('dotenv').config();
 require('./config/dbConnect');
@@ -22,6 +23,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 // routes
 app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
+app.use('/api/blog', blogRouter);
 
 app.use(globalErrHandler);
 app.use(notFoundErr);
