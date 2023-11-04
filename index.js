@@ -7,8 +7,8 @@ const userRouter = require('./routes/authRoutes');
 const productRouter = require('./routes/productRoutes');
 const blogRouter = require('./routes/blogRoutes');
 const categoryRouter = require('./routes/prodcategoryRoutes');
-const blogcategoryRouter = require('./route/blogCatRoute')
-
+const blogcategoryRouter = require('./route/blogCatRoute');
+const brandRouter = require("./routes/brandRoute");
 
 require('dotenv').config();
 require('./config/dbConnect');
@@ -29,7 +29,7 @@ app.use('/api/product', productRouter);
 app.use('/api/blog', blogRouter);
 app.use('/api/category', categoryRouter);
 app.use("/api/blogcategory", blogcategoryRouter);
-
+app.use("/api/brand", brandRouter)
 
 app.use(globalErrHandler);
 app.use(notFoundErr);
