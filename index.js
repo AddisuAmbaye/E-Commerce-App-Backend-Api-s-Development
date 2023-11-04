@@ -6,7 +6,9 @@ const bodyParser = require('body-parser');
 const userRouter = require('./routes/authRoutes');
 const productRouter = require('./routes/productRoutes');
 const blogRouter = require('./routes/blogRoutes');
-const categoryRouter = require('./routes/productcategoryRoutes');
+const categoryRouter = require('./routes/prodcategoryRoutes');
+const blogcategoryRouter = require('./route/blogCatRoute')
+
 
 require('dotenv').config();
 require('./config/dbConnect');
@@ -26,6 +28,7 @@ app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
 app.use('/api/blog', blogRouter);
 app.use('/api/category', categoryRouter);
+app.use("/api/blogcategory", blogcategoryRouter);
 
 
 app.use(globalErrHandler);

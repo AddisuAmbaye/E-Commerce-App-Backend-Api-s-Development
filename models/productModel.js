@@ -1,4 +1,5 @@
 // Declare the Schema of the Mongo model
+const mongoose = require("mongoose");
 var productSchema = new mongoose.Schema(
   {
     title: {
