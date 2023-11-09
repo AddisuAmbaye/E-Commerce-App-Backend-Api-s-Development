@@ -1,5 +1,4 @@
-# E-Commerce-App-Backend-Api-s-Development
-e-commerce app in Node.js with a REST API and MongoDB. Using advanced authentication with a JSON web token and the mern stack
+
 
 # E-Commerce App Backend API Development
 
