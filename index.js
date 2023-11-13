@@ -11,7 +11,9 @@ const blogcategoryRouter = require('./route/blogCatRoute');
 const brandRouter = require("./routes/brandRoute");
 const couponRouter = require("./routes/couponRoute");
 const colorRouter = require("./routes/colorRoute");
-
+const enqRouter = require("./routes/enqRoute");
+const uploadRouter = require("./routes/uploadRoute");
+const cors = require("cors");
 
 require('dotenv').config();
 require('./config/dbConnect');
@@ -19,6 +21,7 @@ require('./config/dbConnect');
 const app = express();
 
 // middlewares
+app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(cookieParser());
@@ -35,8 +38,8 @@ app.use("/api/blogcategory", blogcategoryRouter);
 app.use("/api/brand", brandRouter)
 app.use("/api/coupon", couponRouter);
 app.use("/api/color", colorRouter);
-
-
+app.use("/api/enquiry", enqRouter);
+app.use("/api/upload", uploadRouter);
 
 app.use(globalErrHandler);
 app.use(notFoundErr);
